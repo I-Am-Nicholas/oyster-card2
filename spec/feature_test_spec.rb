@@ -27,15 +27,15 @@ describe 'Feature Tests' do
     station = ('whitechapel')
     card = Oystercard.new
     card.top_up(5)
-    card.touch_in(card, station)
+    card.touch_in(station)
     expect(card.entry_station).to include(station)
   end
 
   it "resets the entry station to nil" do
       card = Oystercard.new
       card.top_up(5)
-      card.touch_in(card, 'whitechapel')
-      card.touch_out
+      card.touch_in('whitechapel')
+      card.touch_out('old gate')
       expect(card.entry_station).to eq nil
   end
 

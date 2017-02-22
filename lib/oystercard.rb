@@ -3,39 +3,41 @@ attr_reader :balance, :entry_station
 
   def initialize
     @balance = 0
-    @in_transit = []
+    @journeys = []
   end
 
   def top_up(money)
     fail "Please top-up with money." unless money.is_a?(Fixnum)
-    fail "The maximum amount is: £#{LIMIT}." if money > LIMIT
+    fail "The maximum amount is: £#{MAX_LIMIT}." if (balance + money) > MAX_LIMIT
     @balance += money
   end
 
-  def touch_in(card, station)
+  def touch_in(entry_station)
     check_balance
-    @entry_station = station
-    @in_transit << card
+    @entry_station = entry_station
   end
 
-  def touch_out
+  def touch_out(exit_station)
     deduct(MIN_FARE)
-    @in_transit.pop
+    @exit_station = exit_station
+    @journeys << {entry_station: entry_station, exit_station: exit_station}
     @entry_station = nil
+    @exit_station = nil
   end
 
   def in_journey?
-    true unless @entry_station = nil
+    !!@entry_station
+    # true unless @entry_station = nil
   end
 
   private
 
-  LIMIT = 90
-  MIN = 1
+  MAX_LIMIT = 90
+  MIN_LIMIT = 1
   MIN_FARE = 3
 
   def check_balance
-    fail "The minimum balance needed for your journey is £#{MIN}" unless @balance > MIN
+    fail "The minimum balance needed for your journey is £#{MIN_LIMIT}" unless @balance > MIN_LIMIT
   end
 
   def deduct(fare)
