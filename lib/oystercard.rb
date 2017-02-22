@@ -12,10 +12,6 @@ attr_reader :balance, :entry_station
     @balance += money
   end
 
-  def check_balance
-    fail "The minimum balance needed for your journey is £#{MIN}" unless @balance > MIN
-  end
-
   def touch_in(card, station)
     check_balance
     @entry_station = station
@@ -37,6 +33,10 @@ attr_reader :balance, :entry_station
   LIMIT = 90
   MIN = 1
   MIN_FARE = 3
+
+  def check_balance
+    fail "The minimum balance needed for your journey is £#{MIN}" unless @balance > MIN
+  end
 
   def deduct(fare)
     @balance -= fare
