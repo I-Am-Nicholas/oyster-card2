@@ -2,8 +2,9 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:card) {described_class.new}
+  let(:station) {double :station}
 
-  describe "#top_up", :top_up do
+  describe "#top_up" do
     it "responds to top_up" do
       expect(card).to respond_to(:top_up)
     end
@@ -13,6 +14,10 @@ describe Oystercard do
       expect(card.balance).to eq 10
     end
   end
+
+    it "raises an error if money is not a number" do
+      expect{card.top_up(station)}.to raise_error "Please top-up with money."
+    end
 
   describe "#balance" do
     it "has a balance" do
@@ -34,22 +39,12 @@ describe Oystercard do
         card.top_up(3)
       end
 
-      it "responds to touch_in" do
-        expect(card).to respond_to(:touch_in)
-      end
-
       it "adds the card to the in_transit array" do
-
-        expect(card.touch_in(card)).to include(card)
-      end
-
-      it "removes card from in_transit array" do
-        card.touch_in(card)
-        expect(card.touch_out).to eq(card)
+        expect(card.touch_in(card, station)).to include(card)
       end
 
       it "returns a boolean value" do
-        card.touch_in(card)
+        card.touch_in(card, station)
         expect(subject.in_journey?).to be true
       end
 
@@ -58,11 +53,10 @@ describe Oystercard do
       end
 
       context "When balance is below the minimum" do
-
         it "returns an error when balance is less than the minimum" do
           card.touch_out
           error = "The minimum balance needed for your journey is £#{Oystercard::MIN}"
-          expect{card.touch_in(card)}.to raise_error error
+          expect{card.touch_in(card, station)}.to raise_error error
         end
       end
 
@@ -70,7 +64,15 @@ describe Oystercard do
           expect{card.touch_out}.to change{card.balance}.by(-Oystercard::MIN_FARE)
       end
 
+      it "records the touched-in station" do
+        card.touch_in(card, station)
+        expect(card.entry_station).to eq(station)
+      end
 
-
+      it "resets the entry station to nil" do
+        card.touch_in(card, station)
+        card.touch_out
+        expect(card.entry_station).to eq nil
+      end
     end
   end
