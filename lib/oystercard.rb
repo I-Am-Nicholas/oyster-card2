@@ -15,6 +15,7 @@ attr_accessor :balance, :entry_station, :exit_station
 
   def touch_in(entry_station)
     check_balance
+    
     @entry_station = entry_station
   end
 
