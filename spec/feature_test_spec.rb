@@ -28,7 +28,7 @@ describe 'Feature Tests' do
     card = Oystercard.new
     card.top_up(5)
     card.touch_in(station)
-    expect(card.entry_station).to include(station)
+    expect(card.entry_station).to eq(station)
   end
 
   it "resets the entry station to nil" do
